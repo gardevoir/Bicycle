@@ -6,6 +6,7 @@
 #include <GL/gl.h>
 #include <GL/glu.h>
 #include <math.h>
+#include "Bicycle.h"
 
 float x_axis = 0, y_axis = 0, z_axis = 0;
 
@@ -26,7 +27,7 @@ void display(void)
 	glScalef (1, 1, 1);
 
 	//**************************************************************
-	glTranslatef(x_axis, y_axis, z_axis);
+	/*glTranslatef(x_axis, y_axis, z_axis);
 	glPushMatrix();//sol teker
 		glTranslatef(-13, 0, 0);
 		glutSolidTorus(0.5,5.0,10,50);
@@ -157,8 +158,10 @@ void display(void)
 		glRotatef(90, 1, 0, 0);
 		glTranslatef(-1, -3, 5);
 		gluCylinder(quad, 0.7, 0.7, 0.9, 30, 30);
-	glPopMatrix();
-		
+	glPopMatrix();*/
+	
+	Bicycle *b = new Bicycle();
+	b->draw_bicycle();
 	
 	glFlush ();
 }

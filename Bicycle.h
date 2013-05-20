@@ -8,9 +8,7 @@
 class Bicycle
 {
 public:
-	Bicycle(void);
-
-public:
+	Bicycle();
 	void draw_bicycle();
 	void accelerate();
 	void brake();
@@ -34,13 +32,12 @@ private:
 	void draw_saddle(GLUquadric *q, int x, int y, int z);
 	void draw_pedal_body(GLUquadric *q, int x, int y, int z, double angle);
 	void draw_pedal(GLUquadric *q, int x, int y ,int z, double angle);
-
 	const double disc_inner_radius;
 	const double disc_outer_radius;
 	const double body_radius;
 	const int slices;
 
-	double x_axis, y_axis, z_axis, wheel_angle;
+	double x_axis, y_axis, z_axis, wheel_angle, handle_angle, pedal_angle;
 	GLUquadric *q;
 	//-----------------------------------------------
 
