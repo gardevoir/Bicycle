@@ -7,6 +7,8 @@
 #include <GL/glu.h>
 #include <math.h>
 
+float x_axis = 0, y_axis = 0, z_axis = 0;
+
 void init(void)
 {
 	glClearColor (0.0, 0.0, 0.0, 0.0);
@@ -22,6 +24,9 @@ void display(void)
 	glLoadIdentity ();
 	gluLookAt (0.0, 0.0, 40.0, 0.0, 0.0, 0.0, 0.0, 1.0, 1.0);
 	glScalef (1, 1, 1);
+
+	//**************************************************************
+	glTranslatef(x_axis, y_axis, z_axis);
 	glPushMatrix();//sol teker
 		glTranslatef(-13, 0, 0);
 		glutSolidTorus(0.5,5.0,10,50);
@@ -30,13 +35,13 @@ void display(void)
 		glTranslatef(13, 0, 0);
 		glutSolidTorus(0.5,5.0,10,50);
 	glPopMatrix();
-	glPushMatrix();
-		glTranslatef(-1, -2, 1);
+	glPushMatrix();//disk
+		glTranslatef(-1, -2, 1.5);
 		//gluCylinder(quad, 0, 1, 1, 30, 30);
 		gluDisk(quad, 0, 1, 30, 30);
 	glPopMatrix();
 	glPushMatrix();
-		glTranslatef(-1, -2, -1);
+		glTranslatef(-1, -2, -1.5);
 		//gluCylinder(quad, 0, 1, 1, 30, 30);
 		gluDisk(quad, 0, 1, 30, 30);
 	glPopMatrix();
@@ -103,28 +108,7 @@ void display(void)
 		glTranslatef(9, 10, -2.5);
 		gluCylinder(quad, 0.4, 0.4, 5, 30, 30);
 	glPopMatrix();
-	/*glPushMatrix();//gidon 2. parca
-		glRotatef(90, 0, 1, 0);
-		glTranslatef(0, 9, 8);
-		glRotatef(-26.565, 1, 0, 0);
-		gluCylinder(quad, 0.4, 0.4, sqrtf(5), 30, 30);
-	glPopMatrix();
-	glPushMatrix();//gidon 3. parca
-		glRotatef(90, 0, 1, 0);
-		glTranslatef(0, 10, 10);
-		glRotatef(-135, 1, 0, 0);
-		gluCylinder(quad, 0.4, 0.4, sqrtf(2), 30, 30);
-	glPopMatrix();
-	glPushMatrix();//gidon son parca
-		glRotatef(90, 0, 1, 0);
-		glTranslatef(-1, 11, 9);
-		gluCylinder(quad, 0.4, 0.4, 2, 30, 30);
-	glPopMatrix();
-	glPushMatrix();//gidon son parca
-		glRotatef(90, 0, 1, 0);
-		glTranslatef(1, 11, 9);
-		gluCylinder(quad, 0.4, 0.4, 2, 30, 30);
-	glPopMatrix();*/
+	
 	glPushMatrix();//selenin demiri
 		glRotatef(90, 0, 1, 0);
 		glTranslatef(0, 7, -6);
@@ -163,7 +147,18 @@ void display(void)
 		glTranslatef(-2, -2, -1);
 		glRotatef(360-90, 1, 0, 0);
 		gluCylinder(quad, 0.3, 0.3, 3, 30, 30);
-
+	glPopMatrix();
+	glPushMatrix();//pedal ayakligi
+		glRotatef(90, 1, 0, 0);
+		glTranslatef(-1, 3, -1);
+		gluCylinder(quad, 0.7, 0.7, 0.9, 30, 30);
+	glPopMatrix();
+	glPushMatrix();
+		glRotatef(90, 1, 0, 0);
+		glTranslatef(-1, -3, 5);
+		gluCylinder(quad, 0.7, 0.7, 0.9, 30, 30);
+	glPopMatrix();
+		
 	
 	glFlush ();
 }
@@ -177,6 +172,53 @@ void reshape (int w, int h)
 	glMatrixMode (GL_MODELVIEW);
 }
 
+void keyboard(unsigned char key, int x, int y)
+{
+	switch(key)
+	{
+	case 'a':
+		if(x_axis < 25){
+			x_axis += 0.5;
+			glutPostRedisplay();
+		}
+			break;
+
+	case 'd':
+		if(x_axis > -25){
+			x_axis -= 0.5;
+			glutPostRedisplay();
+		}
+			break;
+
+	case 'w':
+		if(y_axis < 25){
+			y_axis += 0.5;
+			glutPostRedisplay();
+		}
+		break;
+	case 's':
+		if(y_axis > -25){
+			y_axis -= 0.5;
+			glutPostRedisplay();
+		}
+		break;
+	
+	case 'q':
+		if(z_axis < 25){
+			z_axis += 0.5;
+			glutPostRedisplay();
+		}
+		break;
+
+	case 'e':
+		if(z_axis > -25){
+			z_axis -= 0.5;
+			glutPostRedisplay();
+		}
+		break;
+	}
+}
+
 int main(int argc, char** argv)
 {
 	glutInit(&argc, argv);
@@ -187,6 +229,8 @@ int main(int argc, char** argv)
 	init ();
 	glutDisplayFunc(display);
 	glutReshapeFunc(reshape);
+	glutKeyboardFunc(keyboard);
 	glutMainLoop();
 	return 0;
 }
+
