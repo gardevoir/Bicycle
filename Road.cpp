@@ -1,0 +1,54 @@
+#include "stdafx.h"
+#include "Road.h"
+#include <GL/glut.h>
+#include <GL/gl.h>
+#include <GL/glu.h>
+
+Road::Road(void)
+{
+}
+
+
+Road::~Road(void)
+{
+}
+
+void Road::draw_road()
+{
+	glColor3f(0.5, 0.5, 0.5);
+	glPushMatrix();
+	glBegin(GL_QUADS);
+        glVertex3f(-100, -5, 20);
+        glVertex3f(100, -5, 20);
+        glVertex3f(100, -5, -20);
+        glVertex3f(-100, -5, -20);
+    glEnd();
+	glPopMatrix();
+	glColor3f(1, 1, 1);
+	for(int i = 0; i <= 100; i+=20){
+		glPushMatrix();
+		glTranslatef(i, 0, 0);
+		glBegin(GL_QUADS);
+		glVertex3f(-5, -5, 2);
+		glVertex3f(5, -5, 2);
+		glVertex3f(5, -5, -2);
+		glVertex3f(-5, -5, -2);
+		glEnd();
+		glPopMatrix();
+	}
+	for(int i = -100; i <= 0; i+=20){
+		glPushMatrix();
+		glTranslatef(i, 0, 0);
+		glBegin(GL_QUADS);
+		glVertex3f(-5, -5, 2);
+		glVertex3f(5, -5, 2);
+		glVertex3f(5, -5, -2);
+		glVertex3f(-5, -5, -2);
+		glEnd();
+		glPopMatrix();
+	}
+
+	glColor3f(0, 0, 0);
+	
+    glutSwapBuffers();
+}

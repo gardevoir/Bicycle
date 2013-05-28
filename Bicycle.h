@@ -10,10 +10,9 @@ class Bicycle
 public:
 	Bicycle();
 	void draw_bicycle();
-	void accelerate();
-	void brake();
-	void turn_left();
-	void turn_right();
+	void go_forward();
+	void go_back();
+	void reset();
 
 private:
 	void draw_wheel(int x, int y, int z, double angle);
@@ -28,6 +27,7 @@ private:
 	void draw_mid_body(GLUquadric *q, int x, int y, int z);
 	void draw_handlebar_body(GLUquadric *q, int x, int y, int z, double angle);
 	void draw_handlebar_handle(GLUquadric *q, int x, int y, int z, double angle);
+	void draw_handlebar_handle2(GLUquadric *q, int x, int y, int z, double angle);
 	void draw_saddle_body(GLUquadric *q, int x, int y, int z);
 	void draw_saddle(GLUquadric *q, int x, int y, int z);
 	void draw_pedal_body(GLUquadric *q, int x, int y, int z, double angle);

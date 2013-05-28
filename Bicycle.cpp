@@ -3,6 +3,7 @@
 #include <GL/glut.h>
 #include <GL/gl.h>
 #include <GL/glu.h>
+#include <math.h>
 
 
 Bicycle::Bicycle(): disc_inner_radius(0), disc_outer_radius(1), slices(30),body_radius(0.4)
@@ -12,6 +13,7 @@ Bicycle::Bicycle(): disc_inner_radius(0), disc_outer_radius(1), slices(30),body_
 	z_axis = 0;
 	wheel_angle = 0;
 	handle_angle = 0;
+	pedal_angle = 90;
 	q = gluNewQuadric();
 }
 
@@ -22,7 +24,6 @@ Bicycle::~Bicycle(void)
 
 void Bicycle::draw_bicycle()
 {
-	
 	glTranslatef(x_axis, y_axis, z_axis);//master matrix
 
 	glPushMatrix();//left wheel
@@ -69,6 +70,12 @@ void Bicycle::draw_bicycle()
 	glPushMatrix();//handlebar
 		draw_handlebar_handle(q, 9, 10, -2.5, handle_angle);
 	glPopMatrix();
+	glPushMatrix();
+		draw_handlebar_handle2(q, 3, 10.5, 9, handle_angle);
+	glPopMatrix();
+	glPushMatrix();
+		draw_handlebar_handle2(q, -3, 10.5, 9, handle_angle);
+	glPopMatrix();
 	//saddle
 	glPushMatrix();//saddle body
 		draw_saddle_body(q, 0, 7, -6);
@@ -88,15 +95,15 @@ void Bicycle::draw_bicycle()
 		draw_pedal_body(q, 2, -2, -1, pedal_angle);
 	glPopMatrix();
 	glPushMatrix();//-z axis pedal
-		draw_pedal_body(q, -2, -2, -1, pedal_angle);
+		draw_pedal_body(q, -2, -2, -1, 180+pedal_angle);
 	glPopMatrix();
 	//pedal
-	glPushMatrix();//+z axis 
+	/*glPushMatrix();//+z axis 
 		draw_pedal(q, -1 ,3, -1, pedal_angle);
 	glPopMatrix();
 	glPushMatrix();//-z axis
 		draw_pedal(q, -1, -3, 5, pedal_angle);
-	glPopMatrix();
+	glPopMatrix();*/
 }
 
 
@@ -109,10 +116,14 @@ void Bicycle::draw_wheel(int x, int y, int z, double angle)
 	glutSolidTorus(0.5,5.0,10,50);
 
 	glRotatef(90, 0, 1, 0);
+	glColor3f(0.5, 0, 0.5);
 	for(int i = 1; i < 9; i++){
-		glRotatef(45, 1, 0, 0);
-		gluCylinder(q, 0.2, 0.2, 5, slices, slices);
+		glPushMatrix();
+		glRotatef(angle + i*45, 1, 0, 0);
+		gluCylinder(q, 0.2, 0.2, 4.5, slices, slices);
+		glPopMatrix();
 	}
+	glColor3f(0, 0, 0);
 }
 
 void Bicycle::draw_disc(GLUquadric *q,int x, int y, int z)
@@ -182,6 +193,15 @@ void Bicycle::draw_handlebar_handle(GLUquadric *q, int x, int y, int z, double a
 	gluCylinder(q, body_radius, body_radius, 5, 30, 30);
 }
 
+void Bicycle::draw_handlebar_handle2(GLUquadric *q, int x, int y, int z, double angle)
+{
+	glRotatef(90, 0, 1, 0);
+	glTranslatef(x, y, z);
+	glRotatef(240, 1, 0, 0);
+
+	gluCylinder(q, body_radius, body_radius, 3, 30, 30);
+}
+
 void Bicycle::draw_saddle_body(GLUquadric *q, int x, int y, int z)
 {
 	glRotatef(90, 0, 1, 0);
@@ -192,17 +212,38 @@ void Bicycle::draw_saddle_body(GLUquadric *q, int x, int y, int z)
 
 void Bicycle::draw_saddle(GLUquadric *q, int x, int y, int z)
 {
-	glRotatef(90, 1, 0, 0);	
-	glTranslatef(x, y ,z);
-	gluCylinder(q, 2, 2, 1, slices, slices);
+	glColor3f(0.8, 0, 0);
+	glPushMatrix();
+		glRotatef(90, 1, 0, 0);	
+		glTranslatef(x, y ,z);
+		gluCylinder(q, 2, 2, 1, slices, slices);
+	glPopMatrix();
+	glPushMatrix();
+	glRotatef(90, 1, 0, 0);
+		glTranslatef(x, y, z+0.2);
+		gluDisk(q, 0, 2, slices, slices);
+	glPopMatrix();
+	glPushMatrix();
+	glRotatef(90, 1, 0, 0);
+		glTranslatef(x, y, z-0.2);
+		gluDisk(q, 0, 2, slices, slices);
+	glPopMatrix();
+	glColor3f(0, 0, 0);
 }
 
 void Bicycle::draw_pedal_body(GLUquadric *q, int x, int y, int z, double angle)
 {
 	glRotatef(90, 0, 1, 0);
 	glTranslatef(x, y, z);
-	glRotatef(90, 1, 0, 0);
+	glRotatef(angle, 1, 0, 0);
 	gluCylinder(q, 0.3, 0.3, 3, slices, slices);
+	glTranslatef(0, 0, 3);
+	gluCylinder(q, 0.7, 0.7, 1, slices, slices);
+	glTranslatef(0, 0, 0.10);
+	gluDisk(q, 0, 0.7, slices, slices);
+	glTranslatef(0, 0, -0.20);
+	gluDisk(q, 0, 0.7, slices, slices);
+
 }
 
 void Bicycle::draw_pedal(GLUquadric *q, int x, int y, int z, double angle)
@@ -210,4 +251,28 @@ void Bicycle::draw_pedal(GLUquadric *q, int x, int y, int z, double angle)
 	glRotatef(90, 1, 0, 0);
 	glTranslatef(x, y, z);
 	gluCylinder(q, 0.7, 0.7, 1, slices, slices);
+}
+
+void Bicycle::go_forward()
+{
+	x_axis += 0.5;
+	wheel_angle += 10;
+	pedal_angle += 10;
+	glutPostRedisplay();
+}
+
+void Bicycle::go_back()
+{
+	x_axis -= 0.5;
+	wheel_angle -= 10;
+	pedal_angle -= 10;
+	glutPostRedisplay();
+}
+
+void Bicycle::reset()
+{
+	x_axis = 0;
+	wheel_angle = 0;
+	pedal_angle = 0;
+	glutPostRedisplay();
 }
