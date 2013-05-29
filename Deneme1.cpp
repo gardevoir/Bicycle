@@ -1,6 +1,3 @@
-// Deneme1.cpp : Defines the entry point for the console application.
-//
-
 #include "stdafx.h"
 #include <GL/glut.h>
 #include <GL/gl.h>
@@ -8,8 +5,12 @@
 #include <math.h>
 #include "Bicycle.h"
 #include "Road.h"
+#include <ctype.h>
 
-float x_axis = 0, y_axis = 0, z_axis = 0, cam_x_axis = 0;
+#define CAM_SHIFT 0.5
+
+float x_axis = 0, y_axis = 0, z_axis = 0, cam_x_axis = 0, cam_y_axis = 0, cam_z_axis = 0;
+int control1 = 1, control2 = 1;
 Bicycle *b = new Bicycle();
 Road *r = new Road();
 
@@ -17,22 +18,37 @@ void init(void)
 {
 	glClearColor (0.0, 1, 1, 0.3);
 	glShadeModel (GL_FLAT);
+	glCullFace(GL_FRONT);
 }
 
 void display(void)
 {
 	GLUquadric *quad = gluNewQuadric();
 
-	glClear (GL_COLOR_BUFFER_BIT);
+	glClear (GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glColor3f (1.0, 1.0, 1.0);
 	glLoadIdentity ();
-	gluLookAt (x_axis, y_axis, 40.0, cam_x_axis, 0.0, 0.0, 0.0, 1.0, 1.0);
+	gluLookAt (x_axis, y_axis, z_axis, cam_x_axis, cam_y_axis, cam_z_axis, 0.0, 1.0, 1.0);
 	glScalef (1, 1, 1);
 
-	r->draw_road();
 	glColor3f(0, 0, 0);
-	b->draw_bicycle();
-	
+
+	if(control1 == 0){
+		r->draw_road();
+		b->draw_bicycle();
+	}
+
+	else if(control2 == 0){
+		for(float i = 1; i < 9; i++){
+			Bicycle *bike = new Bicycle();
+			glPushMatrix();
+			glScalef((float)(0.3+i/10), (float)(0.3+i/10), (float)(0.3+i/10));
+			glRotatef(45*i, 0, 1, 0);
+			glTranslatef(25, 0, 0);
+			bike->draw_bicycle();
+			glPopMatrix();
+		}
+	}
 	glFlush ();
 }
 
@@ -41,58 +57,97 @@ void reshape (int w, int h)
 	glViewport (0, 0, (GLsizei) w, (GLsizei) h);
 	glMatrixMode (GL_PROJECTION);
 	glLoadIdentity ();
-	glFrustum (-1.0, 1.0, -1.0, 1.0, 1.5, 70.0);
+	glFrustum (-1.0, 1.0, -1.0, 1.0, 1.5, 200.0);
 	glMatrixMode (GL_MODELVIEW);
 }
 
 void keyboard(unsigned char key, int x, int y)
 {
+	key = tolower(key);
 	switch(key)
 	{
-	case 'a':
-		b->go_back();
-			break;
-		
-
-	case 'd':
-		b->go_forward();
-			break;
-
-	case 'w':
-			y_axis += 0.5;
-			glutPostRedisplay();
-		break;
-	case 's':
-			y_axis -= 0.5;
-			glutPostRedisplay();
-		break;
-	
-	case 'q':
-			x_axis += 0.5;
-			glutPostRedisplay();
-		break;
-
-	case 'e':
-			x_axis -= 0.5;
-			glutPostRedisplay();
-		break;
-		
-	case 'r':
+	case 'a'://tek bisiklet cizdirme
+		b->reset();
+		control1 = 0;
+		control2 = 1;
+		z_axis = 40;
 		x_axis = 0;
 		y_axis = 0;
+		cam_x_axis = 0;
 		glutPostRedisplay();
 		break;
-	case 'y':
+	case 's'://cok bisiklet cizdirme
+		control1 = 1;
+		control2 = 0;
+		z_axis = 65;
+		y_axis = 20;
+		x_axis = 0;
+		cam_x_axis = 0;
+		glutPostRedisplay();
+		break;
+
+	case 'r'://reset
+		control1 = 1;
+		control2 = 1;
+		cam_x_axis = 0;
 		b->reset();
-		break;
-	
-	case 'l':
-		cam_x_axis += 0.5;
 		glutPostRedisplay();
 		break;
+
+	case 'j':
+		x_axis -= CAM_SHIFT;
+		glutPostRedisplay();
+		break;
+
 	case 'k':
-		cam_x_axis -= 0.5;
+		x_axis += CAM_SHIFT;
 		glutPostRedisplay();
+		break;
+
+	case 'n':
+		y_axis -= CAM_SHIFT;
+		glutPostRedisplay();
+		break;
+		
+	case 'm':
+		y_axis += CAM_SHIFT;
+		glutPostRedisplay();
+		break;
+
+	case 'y':
+		z_axis -= CAM_SHIFT;
+		glutPostRedisplay();
+		break;
+
+	case 'u':
+		z_axis += CAM_SHIFT;
+		glutPostRedisplay();
+		break;
+
+	case 't':
+		x_axis = 0;
+		y_axis = 0;
+		z_axis = 0;
+		glutPostRedisplay();
+		break;
+
+
+	}
+}
+
+void arrow_keys(int key, int x, int y)
+{
+	switch (key)
+	{
+	case GLUT_KEY_LEFT:
+		b->go_back();
+		glutPostRedisplay();
+		break;
+	case GLUT_KEY_RIGHT:
+		b->go_forward();
+		glutPostRedisplay();
+		break;
+	default:
 		break;
 	}
 }
@@ -108,7 +163,7 @@ int main(int argc, char** argv)
 	glutDisplayFunc(display);
 	glutReshapeFunc(reshape);
 	glutKeyboardFunc(keyboard);
+	glutSpecialFunc(arrow_keys);
 	glutMainLoop();
 	return 0;
 }
-

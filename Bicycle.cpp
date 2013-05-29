@@ -24,90 +24,94 @@ Bicycle::~Bicycle(void)
 
 void Bicycle::draw_bicycle()
 {
-	glTranslatef(x_axis, y_axis, z_axis);//master matrix
+	glPushMatrix();
+	glTranslatef(x_axis, y_axis, z_axis);//ana matris, hareket icin
 
-	glPushMatrix();//left wheel
+	glPushMatrix();//sol teker
 		draw_wheel(-13, 0, 0, wheel_angle);
 	glPopMatrix();
-	glPushMatrix();//right wheel
+	glPushMatrix();//sag teker
 		draw_wheel(13, 0, 0, wheel_angle);
 	glPopMatrix();
-	//left lower body
-	glPushMatrix();//-z axis part
+	//teker koprusu
+	glPushMatrix();
+		draw_bridge(q, -13, 0, 0);
+	glPopMatrix();
+	glPushMatrix();
+		draw_bridge(q, 13, 0, 0);
+	glPopMatrix();
+	//sol asagý kisim
+	glPushMatrix();//-z yönündeki kisim
 		draw_left_lower_wheel_body(q, 1, 0, -13);
 	glPopMatrix();
-	glPushMatrix();//+z axis part
+	glPushMatrix();//+z yönündeki kisim
 		draw_left_lower_wheel_body(q, -1, 0, -13);
 	glPopMatrix();
-	//left upper body
-	glPushMatrix();//-z axis part
-		draw_left_upper_wheel_body(q, -1, 0, -13);
+	//sol ust kisim
+	glPushMatrix();//-z yönündeki kisim
+		draw_left_upper_wheel_body(q, -1, 0, -13, 3);
 	glPopMatrix();
-	glPushMatrix();//+z axis part
-		draw_left_upper_wheel_body(q, 1, 0, -13);
+	glPushMatrix();//+z yönündeki kisim
+		draw_left_upper_wheel_body(q, 1, 0, -13, -3);
 	glPopMatrix();
-	//right body
-	glPushMatrix();//-z axis part
-		draw_right_wheel_body(q, -1, 0, 13);
+	//sag kisim
+	glPushMatrix();//-z yönündeki kisim
+		draw_right_wheel_body(q, -1, 0, 13, 3
+			);
 	glPopMatrix();
-	glPushMatrix();//+z axis part
-		draw_right_wheel_body(q, 1, 0, 13);
+	glPushMatrix();//+z yönündeki kisim
+		draw_right_wheel_body(q, 1, 0, 13, -3);
 	glPopMatrix();
-	//mid body
-	glPushMatrix();//mid left part
+	//orta kisim
+	glPushMatrix();//orta sol kisim
 		draw_mid_left_body(q, 0, -2, -1);
 	glPopMatrix();
-	glPushMatrix();//mid right part
+	glPushMatrix();//orta sag kisim
 		draw_mid_right_body(q, 0, -2, -1);
 	glPopMatrix();
 	glPushMatrix();//mid upper part
 		draw_mid_upper_body(q, 0, 7, -6);
 	glPopMatrix();
-	//handle
-	glPushMatrix();//handle body
-		draw_handlebar_body(q, 0, 7, 10, handle_angle);
+	//gidon
+	glPushMatrix();//gidonun demiri
+		draw_handlebar_body(q, 0, 7, 10);
 	glPopMatrix();
-	glPushMatrix();//handlebar
-		draw_handlebar_handle(q, 9, 10, -2.5, handle_angle);
+	glPushMatrix();//gidonun 2. demiri
+		draw_handlebar_handle(q, 9, 10, -2.5);
 	glPopMatrix();
-	glPushMatrix();
-		draw_handlebar_handle2(q, 3, 10.5, 9, handle_angle);
+	//gidonun tutacaklari
+	glPushMatrix();//+z kismi
+		draw_handlebar_handle2(q, 2, 10.5, 9);
 	glPopMatrix();
-	glPushMatrix();
-		draw_handlebar_handle2(q, -3, 10.5, 9, handle_angle);
+	glPushMatrix();//-z kismi
+		draw_handlebar_handle2(q, -3, 10.5, 9);
 	glPopMatrix();
-	//saddle
-	glPushMatrix();//saddle body
+	//sele
+	glPushMatrix();//sele demiri
 		draw_saddle_body(q, 0, 7, -6);
 	glPopMatrix();
-	glPushMatrix();//saddle
+	glPushMatrix();//selenin oturagi
 		draw_saddle(q, -7, 0, -10);
 	glPopMatrix();
-	//discs
-	glPushMatrix();//+z axis disc
+	//diskler
+	glPushMatrix();//+z kismi
 		draw_disc(q, -1, -2, 1.5);
 	glPopMatrix();
-	glPushMatrix();//-z axis disc
+	glPushMatrix();//-z kismi
 		draw_disc(q, -1, -2, -1.5);
 	glPopMatrix();
-	//pedal body
-	glPushMatrix();//+z axis pedal
-		draw_pedal_body(q, 2, -2, -1, pedal_angle);
-	glPopMatrix();
-	glPushMatrix();//-z axis pedal
-		draw_pedal_body(q, -2, -2, -1, 180+pedal_angle);
-	glPopMatrix();
 	//pedal
-	/*glPushMatrix();//+z axis 
-		draw_pedal(q, -1 ,3, -1, pedal_angle);
+	glPushMatrix();//+z kismi
+		draw_pedal_body(q, 1, -2, -1, pedal_angle);
 	glPopMatrix();
-	glPushMatrix();//-z axis
-		draw_pedal(q, -1, -3, 5, pedal_angle);
-	glPopMatrix();*/
+	glPushMatrix();//-z kismi
+		draw_pedal_body(q, -1, -2, -1, 180+pedal_angle);
+	glPopMatrix();
+	glPopMatrix();
 }
 
 
-//private methods
+//private 
 
 
 void Bicycle::draw_wheel(int x, int y, int z, double angle)
@@ -126,6 +130,12 @@ void Bicycle::draw_wheel(int x, int y, int z, double angle)
 	glColor3f(0, 0, 0);
 }
 
+void Bicycle::draw_bridge(GLUquadric *q, int x, int y, int z)
+{
+	glTranslatef(x, y, z);
+	gluCylinder(q, 0.3, 0.3, 2, slices, slices);
+}
+
 void Bicycle::draw_disc(GLUquadric *q,int x, int y, int z)
 {
 	glTranslatef(x, y, z);
@@ -140,19 +150,21 @@ void Bicycle::draw_left_lower_wheel_body(GLUquadric *q, int x, int y, int z)
 	gluCylinder(q, body_radius, body_radius, 12.165, slices, slices);
 }
 
-void Bicycle::draw_left_upper_wheel_body(GLUquadric *q, int x, int y, int z)
+void Bicycle::draw_left_upper_wheel_body(GLUquadric *q, int x, int y, int z, int axis)
 {
 	glRotatef(90, 0, 1, 0);
 	glTranslatef(x, y, z);
 	glRotatef(-45, 1, 0, 0);
+	glRotatef(axis, 0, 1, 0);
 	gluCylinder(q, body_radius, body_radius, 9.899, slices, slices);
 }
 
-void Bicycle::draw_right_wheel_body(GLUquadric *q, int x, int y, int z)
+void Bicycle::draw_right_wheel_body(GLUquadric *q, int x, int y, int z, int axis)
 {
 	glRotatef(90, 0, 1, 0);
 	glTranslatef(x, y, z);
 	glRotatef(-180+66.801, 1, 0, 0);
+	glRotatef(axis, 0, 1, 0);
 	gluCylinder(q, body_radius, body_radius, 7.615, slices, slices);
 }
 
@@ -179,7 +191,7 @@ void Bicycle::draw_mid_upper_body(GLUquadric *q, int x, int y, int z)
 	gluCylinder(q, body_radius, body_radius, 16, slices, slices);
 }
 
-void Bicycle::draw_handlebar_body(GLUquadric *q, int x, int y, int z, double angle)
+void Bicycle::draw_handlebar_body(GLUquadric *q, int x, int y, int z)
 {
 	glRotatef(90, 0, 1, 0);
 	glTranslatef(x, y, z);
@@ -187,13 +199,13 @@ void Bicycle::draw_handlebar_body(GLUquadric *q, int x, int y, int z, double ang
 	gluCylinder(q, body_radius, body_radius, 2.8284, slices, slices);
 }
 
-void Bicycle::draw_handlebar_handle(GLUquadric *q, int x, int y, int z, double angle)
+void Bicycle::draw_handlebar_handle(GLUquadric *q, int x, int y, int z)
 {
 	glTranslatef(x, y, z);
 	gluCylinder(q, body_radius, body_radius, 5, 30, 30);
 }
 
-void Bicycle::draw_handlebar_handle2(GLUquadric *q, int x, int y, int z, double angle)
+void Bicycle::draw_handlebar_handle2(GLUquadric *q, int x, int y, int z)
 {
 	glRotatef(90, 0, 1, 0);
 	glTranslatef(x, y, z);
